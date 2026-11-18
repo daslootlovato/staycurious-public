@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-18T22:06:35Z",
+ "generated_at": "2026-11-18T22:44:52Z",
  "values": [
   {
    "id": "life",
@@ -36,8 +36,8 @@
  ],
  "bill_count": 212,
  "news_outlets_verified": true,
- "news_source": "gnews",
+ "news_source": "gdelt",
  "zip_count": 33791,
- "members_with_money": 310,
+ "members_with_money": 522,
  "members_with_totals": 515
 }
