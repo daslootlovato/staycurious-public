@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stay Curious — Bill Watch</title>
+<meta name="description" content="See federal bills moving through Congress, how they line up with what you value, and exactly who represents you — with phone numbers and who funds them.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;1,500;1,600&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f4f4f2; --card:#fbfbf9; --ink:#2e2e2e; --muted:#77736c; --line:#dcdad4; --rule:#2e2e2e;
+    --urgent:#a5473d; --safe:#7c9471; --neutral:#d4a937; --neutral-ink:#5e4a12;
+    --pending-bg:#ebe9e4; --taupe:#a99a86; --taupe-bg:#ece6dc; --taupe-ink:#4f4538;
+    --early:#cfc6b8; --middle:#a99a86; --late:#7a6c5a; --final:#2e2e2e; --dead:#c9c5bd;
+    --serif:"Playfair Display",Georgia,"Times New Roman",serif;
+    --sans:"Public Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font:15px/1.55 var(--sans);background:var(--bg);color:var(--ink)}
+  .wrap{max-width:1100px;margin:auto;padding:0 28px}
+  .topbar{display:flex;justify-content:space-between;align-items:baseline;padding:26px 0 16px;
+          border-bottom:1.5px solid var(--rule);font-weight:600}
+  .topbar .sub{font-weight:500;color:var(--muted);font-size:13px}
+  h1{font-family:var(--serif);font-style:italic;font-weight:600;font-size:clamp(46px,8vw,88px);
+     line-height:1;letter-spacing:-.02em;margin:40px 0 18px}
+  h2{font-family:var(--serif);font-style:italic;font-weight:600;font-size:30px;margin:38px 0 14px}
+  .lede{font-size:18px;max-width:680px;color:#444;margin:0 0 30px}
+  .muted{color:var(--muted)} .small{font-size:12px}
+  a{color:inherit}
+  /* form */
+  form{background:var(--card);border:1px solid var(--line);border-radius:4px;padding:26px 28px;max-width:760px}
+  label.zip{display:block;font-weight:700;font-size:13px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px}
+  input[type=text],select{font:inherit;font-size:16px;padding:11px 14px;border-radius:4px;border:1px solid var(--line);background:#fff;color:var(--ink)}
+  input#zip{width:170px;font-size:22px;letter-spacing:.12em;font-variant-numeric:tabular-nums}
+  fieldset{border:0;margin:24px 0 0;padding:0}
+  legend{font-weight:700;font-size:13px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px}
+  .vals{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:8px;margin-top:10px}
+  .val{display:flex;gap:10px;align-items:flex-start;border:1px solid var(--line);border-radius:4px;padding:10px 12px;background:#fff;cursor:pointer}
+  .val input{margin-top:3px;accent-color:var(--ink);width:16px;height:16px}
+  .val.off{opacity:.55}
+  .go{margin-top:22px;background:var(--ink);color:var(--bg);border:0;border-radius:3px;padding:13px 26px;font:inherit;font-weight:700;font-size:15px;cursor:pointer}
+  .go:hover{opacity:.88}
+  .err{color:var(--urgent);font-weight:600;margin-top:10px}
+  .linkbtn{background:none;border:0;padding:0;font:inherit;text-decoration:underline;cursor:pointer;color:inherit}
+  /* reps */
+  .where{display:flex;gap:14px;align-items:baseline;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:14px}
+  .where b{font-family:var(--serif);font-size:22px}
+  .reps{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px}
+  .rep{background:var(--card);border:1px solid var(--line);border-radius:4px;padding:16px 18px}
+  .rep .who{font-family:var(--serif);font-size:21px;font-weight:600;line-height:1.2}
+  .rep .role{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+  .rep .line{margin:3px 0;font-size:14px}
+  .note{background:var(--taupe-bg);color:var(--taupe-ink);border-radius:3px;padding:8px 12px;font-size:13px;margin:10px 0}
+  .pacspec{margin:10px 0 6px}
+  .pacbar{position:relative;display:flex;height:8px;border-radius:4px;margin-top:12px}
+  .pacbar span{flex:1;height:8px} .pacbar span:first-child{border-radius:4px 0 0 4px} .pacbar span:last-child{border-radius:0 4px 4px 0}
+  .pacbar i{position:absolute;top:-11px;transform:translateX(-50%);border-left:6px solid transparent;border-right:6px solid transparent;border-top:9px solid var(--ink)}
+  .pacends{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin:2px 0}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  td,th{text-align:left;padding:5px 6px;border-bottom:1px solid var(--line);vertical-align:top}
+  .num{text-align:right;font-variant-numeric:tabular-nums}
+  .sbar{height:6px;background:var(--taupe);border-radius:3px}
+  details summary{cursor:pointer;font-weight:600;margin:8px 0 4px;font-size:13px}
+  /* bills */
+  .stats{display:flex;gap:12px;flex-wrap:wrap;margin:6px 0 18px}
+  .stat{background:var(--card);border:1px solid var(--line);border-radius:4px;padding:12px 18px;min-width:130px;cursor:pointer;text-align:left;font:inherit;color:inherit}
+  .stat b{display:block;font-family:var(--serif);font-size:34px;font-weight:600;line-height:1.1}
+  .stat span{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase}
+  .stat.URGENT span{color:var(--urgent)} .stat.SAFE span{color:var(--safe)} .stat.NEUTRAL span{color:#b08a1f}
+  .stat.on.URGENT{background:var(--urgent);border-color:var(--urgent);color:#fff}
+  .stat.on.SAFE{background:var(--safe);border-color:var(--safe);color:#fff}
+  .stat.on.NEUTRAL{background:var(--neutral);border-color:var(--neutral);color:var(--neutral-ink)}
+  .stat.on span{color:inherit}
+  .filters{display:flex;gap:10px;flex-wrap:wrap;padding-bottom:20px;border-bottom:1px solid var(--line)}
+  .filters select,.filters input{font-size:14px;padding:9px 12px}
+  .filters input{flex:1;min-width:200px}
+  select.on{background:var(--taupe-bg);border-color:var(--taupe);color:var(--taupe-ink);font-weight:600}
+  .bills{padding:22px 0 40px}
+  .card{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--line);border-radius:4px;padding:20px 22px;margin-bottom:14px}
+  .card.URGENT{border-left-color:var(--urgent)} .card.SAFE{border-left-color:var(--safe)} .card.NEUTRAL{border-left-color:var(--neutral)}
+  .top{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .label{font-weight:700;font-variant-numeric:tabular-nums}
+  .title{font-family:var(--serif);font-size:23px;font-weight:600;line-height:1.25;margin:8px 0 4px}
+  .chip{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:3px 10px;border-radius:3px}
+  .URGENT.chip{background:var(--urgent);color:#fff} .SAFE.chip{background:var(--safe);color:#fff}
+  .NEUTRAL.chip{background:var(--neutral);color:var(--neutral-ink)} .lvl{background:var(--taupe-bg);color:var(--taupe-ink)}
+  .track{margin:14px 0 6px}
+  .bar{height:6px;border-radius:3px;background:#e7e4de;overflow:hidden} .fill{height:100%;border-radius:3px}
+  .steps{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-top:5px}
+  .stagetxt{font-size:13px;margin-top:4px}
+  .phase{font-weight:700;text-transform:uppercase;font-size:11px;letter-spacing:.1em}
+  .why{margin:12px 0 0;padding:0;list-style:none}
+  .why li{margin:4px 0;font-size:14px;display:flex;gap:8px}
+  .why .mk{font-weight:700;min-width:16px}
+  .why .neg .mk{color:var(--urgent)} .why .pos .mk{color:var(--safe)}
+  .votes{font-size:13px;margin-top:10px}
+  button.more{margin-top:12px;background:none;border:1px solid var(--ink);border-radius:3px;padding:7px 14px;color:var(--ink);cursor:pointer;font:inherit;font-size:13px;font-weight:600}
+  button.more:hover{background:var(--ink);color:var(--bg)}
+  .detail{margin-top:16px;border-top:1px solid var(--line);padding-top:4px}
+  .detail h3{font-family:var(--serif);font-style:italic;font-weight:600;font-size:20px;margin:20px 0 8px}
+  .cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+  .box{border:1px solid var(--line);border-radius:4px;padding:12px 14px;background:#fff}
+  .box h4{margin:0 0 6px;font-size:14px}
+  ul{margin:4px 0;padding-left:18px}
+  .empty{color:var(--muted);text-align:center;padding:40px;font-family:var(--serif);font-style:italic;font-size:20px}
+  footer{border-top:1.5px solid var(--rule);margin-top:30px;padding:18px 0 50px;font-size:13px;color:#555}
+  footer p{max-width:820px}
+  [hidden]{display:none!important}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar"><span>Stay Curious</span><span class="sub" id="updated">Bill Watch</span></div>
+  <h1>Bill Watch</h1>
+  <p class="lede">Enter your ZIP code and choose what matters to you. You'll see the federal bills moving
+    through Congress, how each one lines up with your values, and exactly who represents you — with their
+    phone numbers, how they voted, and who funds them.</p>
+
+  <form id="form" autocomplete="off">
+    <label class="zip" for="zip">Your ZIP code</label>
+    <input type="text" id="zip" inputmode="numeric" maxlength="5" pattern="[0-9]{5}" placeholder="53703" required>
+    <div id="statePick" hidden style="margin-top:12px">
+      <span class="small">We couldn't match that ZIP to a district (PO Box ZIPs aren't mapped). Pick your state to see your senators:</span><br>
+      <select id="state"></select>
+    </div>
+    <fieldset>
+      <legend>Verify the values that matter to you</legend>
+      <div class="small muted">This site was built around these values. Keep the ones you share; uncheck any you don't.
+        Each bill is flagged by adding up how it affects the values you keep.</div>
+      <div class="vals" id="vals"></div>
+    </fieldset>
+    <button class="go" type="submit">Show my bills</button>
+    <div class="err" id="err" hidden></div>
+  </form>
+
+  <section id="results" hidden>
+    <h2>Your members of Congress</h2>
+    <div class="where" id="where"></div>
+    <div id="zipnote"></div>
+    <div class="reps" id="reps" style="margin-top:14px"></div>
+
+    <h2>Federal bills, flagged by your values</h2>
+    <div class="stats" id="stats"></div>
+    <div class="filters">
+      <select id="f-flag"><option value="">Every flag</option><option>URGENT</option><option>SAFE</option><option>NEUTRAL</option></select>
+      <select id="f-phase">
+        <option value="">Any stage</option>
+        <option value="early">Early — introduced / in committee</option>
+        <option value="middle">Middle — out of committee / floor</option>
+        <option value="late">Late — passed a chamber</option>
+        <option value="final">Final — on the President's desk / vetoed</option>
+      </select>
+      <input id="f-text" placeholder="Search title, topic, bill number…">
+    </div>
+    <div class="bills" id="bills"></div>
+  </section>
+
+  <footer>
+    <p><b>How this works.</b> Bills come from Congress.gov. Plain-English summaries and value scores are written
+      by an AI model (Claude) from each bill's text and the Congressional Research Service summary, and can
+      contain mistakes — always check the official bill page before acting. A bill's flag reflects only the
+      values you keep checked: <b>URGENT</b> means it works against them overall, <b>SAFE</b> means it advances
+      them, <b>NEUTRAL</b> means it doesn't move them either way. Bills that are already law or dead are left out.</p>
+    <p><b>Data:</b> Congress.gov · House Clerk & Senate roll-call records · FEC (federal campaign finance, current
+      two-year cycle; PAC sectors are AI estimates) · U.S. Census ZIP-to-district crosswalk · @unitedstates
+      congress-legislators · news via GNews, limited to outlets on a high-factuality list;
+      outlet leanings are approximate.</p>
+    <p><b>Privacy:</b> your ZIP code and choices stay in your browser — nothing is sent or stored.
+      Not affiliated with any government agency, party or campaign.</p>
+    <p class="muted" id="footmeta"></p>
+  </footer>
+</div>
+
+<script>
+const STATES={AL:"Alabama",AK:"Alaska",AZ:"Arizona",AR:"Arkansas",CA:"California",CO:"Colorado",CT:"Connecticut",DE:"Delaware",DC:"District of Columbia",FL:"Florida",GA:"Georgia",HI:"Hawaii",ID:"Idaho",IL:"Illinois",IN:"Indiana",IA:"Iowa",KS:"Kansas",KY:"Kentucky",LA:"Louisiana",ME:"Maine",MD:"Maryland",MA:"Massachusetts",MI:"Michigan",MN:"Minnesota",MS:"Mississippi",MO:"Missouri",MT:"Montana",NE:"Nebraska",NV:"Nevada",NH:"New Hampshire",NJ:"New Jersey",NM:"New Mexico",NY:"New York",NC:"North Carolina",ND:"North Dakota",OH:"Ohio",OK:"Oklahoma",OR:"Oregon",PA:"Pennsylvania",PR:"Puerto Rico",RI:"Rhode Island",SC:"South Carolina",SD:"South Dakota",TN:"Tennessee",TX:"Texas",UT:"Utah",VT:"Vermont",VA:"Virginia",WA:"Washington",WV:"West Virginia",WI:"Wisconsin",WY:"Wyoming",GU:"Guam",VI:"U.S. Virgin Islands",AS:"American Samoa",MP:"Northern Mariana Islands"};
+const PHASE_COLOR={early:"var(--early)",middle:"var(--middle)",late:"var(--late)",final:"var(--final)",dead:"var(--dead)"};
+const STEPS=["Introduced","Committee","Floor","Passed 1 chamber","Passed both","Law"];
+const PAC_BANDS=[[0,"No PAC money","#7c9471"],[10,"Low PAC funding","#a3b494"],[25,"Moderate PAC funding","#d4a937"],[40,"High PAC funding","#c27a4f"],[101,"Heavily PAC-funded","#a5473d"]];
+const LEAN={left:"Left",lean_left:"Lean Left",center:"Center",lean_right:"Lean Right",right:"Right",unrated:""};
+let META={values:[]}, BILLS=[], MEMBERS={}, ME={reps:[]}, FLAG="", SEL=new Set();
+
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const safeUrl=u=>/^https?:\/\//i.test(u||"")?esc(u):"#";
+const money=n=>n==null?"—":"$"+Math.round(n).toLocaleString();
+const list=a=>(a&&a.length)?"<ul>"+a.map(x=>`<li>${esc(x)}</li>`).join("")+"</ul>":'<p class="muted small">None noted.</p>';
+const getJSON=u=>fetch(u,{cache:"no-cache"}).then(r=>{if(!r.ok)throw new Error(u);return r.json()});
+
+async function init(){
+  META=await getJSON("data/meta.json");
+  $("updated").textContent=`Updated ${new Date(META.generated_at).toLocaleDateString(undefined,{month:"short",day:"numeric",year:"numeric"})}`;
+  $("footmeta").textContent=`${META.bill_count} open federal bills · ${META.zip_count.toLocaleString()} ZIP codes mapped · data refreshed ${new Date(META.generated_at).toLocaleString()}`;
+  $("state").innerHTML=Object.entries(STATES).map(([k,v])=>`<option value="${k}">${v}</option>`).join("");
+  const h=new URLSearchParams(location.hash.slice(1));
+  const pre=h.get("v")?h.get("v").split(","):META.values.map(v=>v.id);
+  SEL=new Set(pre);
+  $("vals").innerHTML=META.values.map(v=>`<label class="val ${SEL.has(v.id)?"":"off"}"><input type="checkbox" value="${esc(v.id)}" ${SEL.has(v.id)?"checked":""}><span>${esc(v.label)}</span></label>`).join("");
+  $("vals").addEventListener("change",e=>{e.target.closest(".val").classList.toggle("off",!e.target.checked)});
+  if(h.get("zip")){ $("zip").value=h.get("zip"); submit(); }
+}
+
+$("form").addEventListener("submit",e=>{e.preventDefault();submit();});
+
+async function submit(){
+  const err=$("err"); err.hidden=true;
+  const zip=$("zip").value.trim();
+  SEL=new Set([...document.querySelectorAll("#vals input:checked")].map(i=>i.value));
+  if(!/^\d{5}$/.test(zip)){err.textContent="Please enter a 5-digit ZIP code.";err.hidden=false;return;}
+  if(!SEL.size){err.textContent="Keep at least one value checked.";err.hidden=false;return;}
+  let dists=null;
+  try{ dists=(await getJSON(`data/zips/${zip[0]}.json`))[zip]||null; }catch(e){}
+  let state;
+  if(dists){ $("statePick").hidden=true; state=dists[0].split("-")[0]; }
+  else if(!$("statePick").hidden){ state=$("state").value; }
+  else{ $("statePick").hidden=false; err.textContent="Pick your state, then press the button again.";err.hidden=false;return; }
+  if(!BILLS.length){ [BILLS,MEMBERS]=await Promise.all([getJSON("data/bills.json"),getJSON("data/members.json")]); }
+  history.replaceState(null,"",`#zip=${zip}&v=${[...SEL].join(",")}`);
+  showReps(zip,state,dists);
+  $("results").hidden=false; renderStats(); renderBills();
+  $("results").scrollIntoView({behavior:"smooth"});
+}
+
+function showReps(zip,state,dists){
+  const all=Object.values(MEMBERS);
+  const sens=all.filter(m=>m.chamber==="Senate"&&m.state===state);
+  const houses=(dists||[]).map(d=>{const [st,n]=d.split("-");return all.find(m=>m.chamber==="House"&&m.state===st&&m.district===n);}).filter(Boolean);
+  ME={reps:[...sens,...houses],ids:new Set([...sens,...houses].map(m=>m.bioguide))};
+  const dtxt=dists?dists.map(d=>{const [st,n]=d.split("-");return n==="AL"?`${STATES[st]||st} (at-large)`:`${STATES[st]||st}'s ${ordinal(+n)} District`;}).join(" or "):`${STATES[state]||state}`;
+  $("where").innerHTML=`<b>ZIP ${esc(zip)}</b><span>${esc(dtxt)}</span><button class="linkbtn small" onclick="document.getElementById('form').scrollIntoView({behavior:'smooth'})">Change ZIP or values</button>`;
+  $("zipnote").innerHTML=(dists&&dists.length>1)?`<div class="note">Your ZIP code crosses more than one congressional district, so every possible representative is shown. <a href="https://www.house.gov/representatives/find-your-representative" target="_blank" rel="noopener">Confirm yours with your full address ↗</a></div>`
+    :(!dists?`<div class="note">Showing your senators. <a href="https://www.house.gov/representatives/find-your-representative" target="_blank" rel="noopener">Find your representative with your full address ↗</a></div>`:"");
+  $("reps").innerHTML=ME.reps.map(repCard).join("")||'<p class="muted">No members found.</p>';
+}
+const ordinal=n=>n+((n%100>=11&&n%100<=13)?"th":({1:"st",2:"nd",3:"rd"}[n%10]||"th"));
+
+function pacSpectrum(m){
+  if(!m||!m.receipts||m.pac==null) return "";
+  const pct=Math.max(0,Math.min(100,100*m.pac/m.receipts));
+  const band=pct<=0?PAC_BANDS[0]:PAC_BANDS.slice(1).find(b=>pct<b[0])||PAC_BANDS[4];
+  return `<div class="pacspec"><div class="pacbar">${PAC_BANDS.map(b=>`<span style="background:${b[2]}"></span>`).join("")}<i style="left:${Math.min(pct,50)/50*100}%"></i></div>
+    <div class="pacends"><span>No PAC money</span><span>Heavily PAC-funded</span></div>
+    <div class="small"><b style="color:${band[2]==="#a3b494"?"#6b8a5c":band[2]}">${band[1]}</b> · ${pct.toFixed(0)}% of this cycle's money came from PACs</div></div>`;
+}
+function sectorBars(rows){
+  if(!rows||!rows.length) return "";
+  const max=Math.max(...rows.map(r=>r.total));
+  return `<table>${rows.map(r=>`<tr><td>${esc(r.sector)}</td><td style="width:38%"><div class="sbar" style="width:${(100*r.total/max).toFixed(0)}%"></div></td><td class="num">${money(r.total)}</td></tr>`).join("")}</table>`;
+}
+function repCard(m){
+  const party={Democrat:"D",Republican:"R",Independent:"I"}[m.party]||m.party||"";
+  const mo=m.money;
+  let moneyHtml='<p class="small muted">Campaign money is still being gathered for this member — check back after the next update.</p>';
+  if(mo&&mo.error) moneyHtml=`<p class="small muted">${esc(mo.error)}</p>`;
+  else if(mo) moneyHtml=`<div class="small" style="margin-top:10px">Raised ${money(mo.receipts)} in ${esc(mo.cycle)} cycle · PACs ${money(mo.pac)} · Individuals ${money(mo.individuals)}</div>
+    ${pacSpectrum(mo)}
+    ${mo.detail_pending?'<p class="small muted">PAC donor details are still being gathered for this member.</p>':""}
+    ${mo.pac_sectors&&mo.pac_sectors.length?`<details><summary>PAC money by sector</summary>${sectorBars(mo.pac_sectors)}
+      <details><summary>Itemized PAC donors</summary><table>${(mo.top_pacs||[]).map(p=>`<tr><td>${esc(p.name)}${p.org?`<br><span class="muted small">${esc(p.org)}</span>`:""}</td><td>${esc(p.sector||"")}</td><td class="num">${money(p.total)}</td></tr>`).join("")}</table></details></details>`:""}
+    <div class="small"><a href="${safeUrl(mo.fec_url)}" target="_blank" rel="noopener">FEC filings ↗</a> <span class="muted">· as of ${esc(mo.as_of)}</span></div>`;
+  return `<div class="rep"><div class="role">${esc(m.title)}${m.district&&m.district!=="AL"?` · District ${+m.district}`:""}</div>
+    <div class="who">${esc(m.name)} <span class="muted" style="font-family:var(--sans);font-size:14px">(${esc(party)}-${esc(m.state)})</span></div>
+    ${m.phone?`<div class="line">📞 <a href="tel:${esc(m.phone)}">${esc(m.phone)}</a></div>`:""}
+    ${m.contact_form?`<div class="line">✉️ <a href="${safeUrl(m.contact_form)}" target="_blank" rel="noopener">Contact form</a></div>`:""}
+    ${moneyHtml}</div>`;
+}
+
+function flagOf(b){
+  let net=0; const why=[];
+  for(const v of META.values){
+    if(!SEL.has(v.id)) continue;
+    const s=(b.scores||{})[v.id]; if(!s||!s.score) continue;
+    net+=s.score; why.push({label:v.label,score:s.score,reason:s.reason});
+  }
+  why.sort((a,b)=>a.score-b.score);
+  return {flag:net<0?"URGENT":net>0?"SAFE":"NEUTRAL",net,why};
+}
+function renderStats(){
+  const c={URGENT:0,SAFE:0,NEUTRAL:0}; BILLS.forEach(b=>c[flagOf(b).flag]++);
+  $("stats").innerHTML=Object.keys(c).map(k=>`<button class="stat ${k} ${FLAG===k?"on":""}" onclick="pickFlag('${k}')"><b>${c[k]}</b><span>${k}</span></button>`).join("");
+}
+function pickFlag(k){FLAG=FLAG===k?"":k;$("f-flag").value=FLAG;renderStats();renderBills();}
+["f-flag","f-phase","f-text"].forEach(id=>$(id).addEventListener("input",()=>{FLAG=$("f-flag").value;renderStats();renderBills();}));
+
+function track(st){
+  const p=st.progress||0;
+  return `<div class="track"><div class="bar"><div class="fill" style="width:${p}%;background:${PHASE_COLOR[st.phase]||"var(--middle)"}"></div></div>
+    <div class="steps">${STEPS.map(s=>`<span>${s}</span>`).join("")}</div>
+    <div class="stagetxt"><span class="phase" style="color:${PHASE_COLOR[st.phase]}">${esc(st.phase||"")}</span> · ${esc(st.stage_label||"")} <span class="muted small">(${p}% of the way)</span></div></div>`;
+}
+function myVotes(b){
+  const out=[];
+  for(const v of b.votes||[]) for(const m of ME.reps){ const vote=(v.by||{})[m.bioguide]; if(vote) out.push(`${esc(m.name)}: <b>${esc(vote)}</b> <span class="muted">(${esc(v.chamber)}, ${esc(v.question||"")})</span>`); }
+  return out.length?`<div class="votes"><b>How your members voted</b><br>${out.join("<br>")}</div>`:"";
+}
+function renderBills(){
+  const ph=$("f-phase").value, q=$("f-text").value.toLowerCase();
+  $("f-phase").classList.toggle("on",!!ph);
+  const order={URGENT:0,NEUTRAL:1,SAFE:2};
+  const rows=BILLS.map(b=>({b,f:flagOf(b)}))
+    .filter(({b,f})=>(!FLAG||f.flag===FLAG)&&(!ph||(b.stage||{}).phase===ph)&&(!q||[b.label,b.title,b.short_title,(b.tags||[]).join(" ")].join(" ").toLowerCase().includes(q)))
+    .sort((x,y)=>order[x.f.flag]-order[y.f.flag]||x.f.net-y.f.net||((y.b.stage||{}).progress||0)-((x.b.stage||{}).progress||0));
+  $("bills").innerHTML=rows.length?rows.map(({b,f})=>`
+    <article class="card ${f.flag}">
+      <div class="top"><span class="chip ${f.flag}">${f.flag}</span><span class="label">${esc(b.label)}</span><span class="chip lvl">Federal</span></div>
+      <div class="title">${esc(b.short_title||b.title)}</div>
+      ${b.short_title&&b.short_title!==b.title?`<div class="small muted">${esc(b.title)}</div>`:""}
+      ${b.one?`<p style="margin:8px 0 0">${esc(b.one)}</p>`:""}
+      ${track(b.stage||{})}
+      ${f.why.length?`<ul class="why">${f.why.map(w=>`<li class="${w.score<0?"neg":"pos"}"><span class="mk">${w.score<0?"▼":"▲"}</span><span><b>${esc(w.label)}:</b> ${esc(w.reason)}</span></li>`).join("")}</ul>`
+        :'<p class="small muted" style="margin-top:10px">This bill doesn\'t clearly advance or work against the values you kept.</p>'}
+      ${myVotes(b)}
+      <button class="more" onclick="toggle(this,'${esc(b.key)}')">Details, who to call & news</button>
+      <div class="detail" hidden></div>
+    </article>`).join(""):'<div class="empty">No bills match these filters.</div>';
+}
+function toggle(btn,key){
+  const box=btn.nextElementSibling; if(!box.hidden){box.hidden=true;return;}
+  const b=BILLS.find(x=>x.key===key), i=b.imp||{};
+  box.innerHTML=`<h3>In plain English</h3><p>${esc(b.summary)}</p>
+    <div class="cols"><div class="box"><h4>What it does</h4>${list(b.does)}</div><div class="box"><h4>Who's affected</h4>${list(b.who)}</div></div>
+    <h3>Potential implications</h3>
+    <div class="cols"><div class="box"><h4>Possible benefits</h4>${list(i.benefits)}</div><div class="box"><h4>Possible concerns</h4>${list(i.concerns)}</div>
+      <div class="box"><h4>Cost / funding</h4><p>${esc(i.cost||"Not stated.")}</p><h4>Unknowns</h4>${list(i.unknowns)}</div></div>
+    ${b.crs?`<details><summary>Congressional Research Service summary</summary><p class="small">${esc(b.crs)}</p></details>`:""}
+    <h3>Who to call about it</h3>
+    <div class="cols">${ME.reps.map(m=>`<div class="box"><h4>${esc(m.title)} ${esc(m.name)}</h4>
+      ${m.phone?`📞 <a href="tel:${esc(m.phone)}">${esc(m.phone)}</a><br>`:""}${m.contact_form?`✉️ <a href="${safeUrl(m.contact_form)}" target="_blank" rel="noopener">Contact form</a>`:""}</div>`).join("")}</div>
+    <h3>Related news</h3>${newsHtml(b.news)}
+    <p class="small"><a href="${safeUrl(b.url)}" target="_blank" rel="noopener">Official bill page on Congress.gov ↗</a></p>`;
+  box.hidden=false;
+}
+function newsHtml(n){
+  const note=`<p class="small muted">Only outlets on our high-factuality list are shown${META.news_outlets_verified?"":" (outlet list pending review)"}. News via ${META.news_source==="gdelt"?"the GDELT Project":"GNews"}.</p>`;
+  if(!n) return '<p class="muted small">News hasn\'t been checked for this bill yet.</p>';
+  if(!(n.articles||[]).length) return '<p class="muted">No related news on this topic</p>'+note;
+  return `${n.overall?`<p class="small">${esc(n.overall)}</p>`:""}<ul>${n.articles.map(a=>`<li class="small"><a href="${safeUrl(a.url)}" target="_blank" rel="noopener">${esc(a.title)}</a> <span class="muted">— ${esc(a.source)}${LEAN[a.lean]?" · "+LEAN[a.lean]:""}</span></li>`).join("")}</ul>${note}`;
+}
+init().catch(e=>{$("err").textContent="The bill data couldn't be loaded. Please try again shortly.";$("err").hidden=false;});
+</script>
+</body>
+</html>

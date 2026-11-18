@@ -1,0 +1,43 @@
+{
+ "generated_at": "2026-11-18T22:06:35Z",
+ "values": [
+  {
+   "id": "life",
+   "label": "Protecting human, animal and plant life"
+  },
+  {
+   "id": "water",
+   "label": "Clean water for all"
+  },
+  {
+   "id": "air",
+   "label": "Clean air"
+  },
+  {
+   "id": "transparency",
+   "label": "Transparency between people and their government"
+  },
+  {
+   "id": "people_over_profit",
+   "label": "People over corporate profit margins"
+  },
+  {
+   "id": "local_say",
+   "label": "People's say over what happens in their area"
+  },
+  {
+   "id": "no_bailouts",
+   "label": "No corporate bailouts or ratepayer-funded tax breaks"
+  },
+  {
+   "id": "honesty_kindness",
+   "label": "Honesty and kindness"
+  }
+ ],
+ "bill_count": 212,
+ "news_outlets_verified": true,
+ "news_source": "gnews",
+ "zip_count": 33791,
+ "members_with_money": 310,
+ "members_with_totals": 515
+}
