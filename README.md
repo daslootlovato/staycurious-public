@@ -1,2 +1,2 @@
 # staycurious-public
-where others can see the same important information but tailored to their area and their representatives.
+Where others are empowered to see what bills directly go against their own values and who to contact to do something about it. 
