@@ -73,6 +73,9 @@
   .stat.on.SAFE{background:var(--safe);border-color:var(--safe);color:#fff}
   .stat.on.NEUTRAL{background:var(--neutral);border-color:var(--neutral);color:var(--neutral-ink)}
   .stat.on span{color:inherit}
+  .stat{display:flex;flex-direction:column;justify-content:flex-start}
+  .stat small{display:block;font-size:12px;color:var(--muted);margin-top:2px}
+  .stat.on small{color:inherit;opacity:.9}
   .filters{display:flex;gap:10px;flex-wrap:wrap;padding-bottom:20px;border-bottom:1px solid var(--line)}
   .filters select,.filters input{font-size:14px;padding:9px 12px}
   .filters input{flex:1;min-width:200px}
@@ -278,7 +281,8 @@ function flagOf(b){
 }
 function renderStats(){
   const c={URGENT:0,SAFE:0,NEUTRAL:0}; BILLS.forEach(b=>c[flagOf(b).flag]++);
-  $("stats").innerHTML=Object.keys(c).map(k=>`<button class="stat ${k} ${FLAG===k?"on":""}" onclick="pickFlag('${k}')"><b>${c[k]}</b><span>${k}</span></button>`).join("");
+  const BLURB={URGENT:"Misaligned with your values",SAFE:"Aligned with your values"};
+  $("stats").innerHTML=Object.keys(c).map(k=>`<button class="stat ${k} ${FLAG===k?"on":""}" onclick="pickFlag('${k}')"><b>${c[k]}</b><span>${k}</span>${BLURB[k]?`<small>${BLURB[k]}</small>`:""}</button>`).join("");
 }
 function pickFlag(k){FLAG=FLAG===k?"":k;$("f-flag").value=FLAG;renderStats();renderBills();}
 ["f-flag","f-phase","f-text"].forEach(id=>$(id).addEventListener("input",()=>{FLAG=$("f-flag").value;renderStats();renderBills();}));
