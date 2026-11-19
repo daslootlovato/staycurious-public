@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-19T13:19:59Z",
+ "generated_at": "2026-11-19T18:34:52Z",
  "values": [
   {
    "id": "life",
@@ -34,9 +34,10 @@
    "label": "Honesty and kindness"
   }
  ],
- "bill_count": 262,
+ "bill_count": 261,
  "news_outlets_verified": true,
  "news_source": "rss",
+ "subscribe_url": "https://script.google.com/macros/s/AKfycbzFgt7uhRm0jOlOLfhR00Gw6TEfUQxExc5Wr6vlaEO4gd5ZsMRhEx8CjlYG0rSi0vhG/exec",
  "zip_count": 33791,
  "members_with_money": 539,
  "members_with_totals": 515
