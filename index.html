@@ -165,8 +165,8 @@
       them, <b>NEUTRAL</b> means it doesn't move them either way. Bills that are already law or dead are left out.</p>
     <p><b>Data:</b> Congress.gov · House Clerk & Senate roll-call records · FEC (federal campaign finance, current
       two-year cycle; PAC sectors are AI estimates) · U.S. Census ZIP-to-district crosswalk · @unitedstates
-      congress-legislators · news via GNews, limited to outlets on a high-factuality list;
-      outlet leanings are approximate.</p>
+      congress-legislators · news from approved outlets' RSS feeds, limited to a high-factuality list and
+      matched to each bill's topic by AI; outlet leanings are approximate.</p>
     <p><b>Privacy:</b> your ZIP code and choices stay in your browser — nothing is sent or stored.
       Not affiliated with any government agency, party or campaign.</p>
     <p class="muted" id="footmeta"></p>
@@ -327,15 +327,15 @@ function toggle(btn,key){
     <h3>Who to call about it</h3>
     <div class="cols">${ME.reps.map(m=>`<div class="box"><h4>${esc(m.title)} ${esc(m.name)}</h4>
       ${m.phone?`📞 <a href="tel:${esc(m.phone)}">${esc(m.phone)}</a><br>`:""}${m.contact_form?`✉️ <a href="${safeUrl(m.contact_form)}" target="_blank" rel="noopener">Contact form</a>`:""}</div>`).join("")}</div>
-    <h3>Related news</h3>${newsHtml(b.news)}
+    <h3>Related news & context</h3>${newsHtml(b.news)}
     <p class="small"><a href="${safeUrl(b.url)}" target="_blank" rel="noopener">Official bill page on Congress.gov ↗</a></p>`;
   box.hidden=false;
 }
 function newsHtml(n){
-  const note=`<p class="small muted">Only outlets on our high-factuality list are shown${META.news_outlets_verified?"":" (outlet list pending review)"}. News via ${META.news_source==="gdelt"?"the GDELT Project":"GNews"}.</p>`;
+  const note=`<p class="small muted">Only outlets on our high-factuality list are shown${META.news_outlets_verified?"":" (outlet list pending review)"}. News via ${META.news_source==="gdelt"?"the GDELT Project":META.news_source==="rss"?"the outlets' own RSS feeds, matched to each bill's topic":"GNews"}.</p>`;
   if(!n) return '<p class="muted small">News hasn\'t been checked for this bill yet.</p>';
   if(!(n.articles||[]).length) return '<p class="muted">No related news on this topic</p>'+note;
-  return `${n.overall?`<p class="small">${esc(n.overall)}</p>`:""}<ul>${n.articles.map(a=>`<li class="small"><a href="${safeUrl(a.url)}" target="_blank" rel="noopener">${esc(a.title)}</a> <span class="muted">— ${esc(a.source)}${LEAN[a.lean]?" · "+LEAN[a.lean]:""}</span></li>`).join("")}</ul>${note}`;
+  return `${n.overall?`<p class="small">${esc(n.overall)}</p>`:""}<ul>${n.articles.map(a=>`<li class="small"><a href="${safeUrl(a.url)}" target="_blank" rel="noopener">${esc(a.title)}</a> <span class="muted">— ${esc(a.source)}${LEAN[a.lean]?" · "+LEAN[a.lean]:""}${a.match==="bill"?" · about this bill":""}</span></li>`).join("")}</ul>${note}`;
 }
 init().catch(e=>{$("err").textContent="The bill data couldn't be loaded. Please try again shortly.";$("err").hidden=false;});
 </script>
