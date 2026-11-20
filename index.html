@@ -340,7 +340,7 @@ function toggle(btn,key){
   const box=btn.nextElementSibling; if(!box.hidden){box.hidden=true;return;}
   const b=BILLS.find(x=>x.key===key), i=b.imp||{}, f=flagOf(b);
   const concerns=(b.cost_flag?`<li><b>Cost to taxpayers: ${esc(b.cost_flag)}</b></li>`:"")+(i.concerns||[]).map(x=>`<li>${esc(x)}</li>`).join("");
-  const sponsors=(b.sponsors||[]).map(x=>esc(x.name)).join("<br>");
+  const sponsors=(b.sponsors||[]).map(x=>esc(x.name)).join(", ");
   box.innerHTML=`<h3>In plain English</h3><p>${esc(b.summary)}</p>
     <div class="cols"><div class="box"><h4>What it does</h4>${list(b.does)}</div><div class="box"><h4>Who's affected</h4>${list(b.who)}</div></div>
     <h3>Potential implications</h3>
@@ -348,8 +348,8 @@ function toggle(btn,key){
       <div class="box"><h4>Possible concerns</h4>${concerns?`<ul>${concerns}</ul>`:'<p class="muted small">None noted.</p>'}
         ${(i.unknowns||[]).length?`<h4 style="margin-top:10px">Unknowns</h4>${list(i.unknowns)}`:""}</div>
       <div class="box"><h4>Who introduced it, and why</h4>
-        ${sponsors?`<p class="small" style="margin:0 0 6px">${sponsors}${b.cosponsors?`<br><span class="muted">+ ${esc(b.cosponsors)} cosponsor${b.cosponsors==1?"":"s"}</span>`:""}${b.introduced?`<br><span class="muted">Introduced ${esc(b.introduced)}</span>`:""}</p>`:""}
-        ${b.purpose?`<p class="small" style="margin:0">${esc(b.purpose)}</p>`:'<p class="muted small">Being written — check back after the next update.</p>'}</div></div>
+        ${sponsors?`<ul><li>${sponsors}${b.cosponsors?` (+ ${esc(b.cosponsors)} cosponsor${b.cosponsors==1?"":"s"})`:""}</li>${b.introduced?`<li>Introduced ${esc(b.introduced)}</li>`:""}</ul>`:""}
+        ${b.purpose?`<p>${esc(b.purpose)}</p>`:'<p class="muted">Being written — check back after the next update.</p>'}</div></div>
     ${b.crs?`<details><summary>Congressional Research Service summary</summary><p class="small">${esc(b.crs)}</p></details>`:""}
     <h3>Who to call about it</h3>
     <div class="cols">${ME.reps.map(m=>`<div class="box"><h4>${esc(m.title)} ${esc(m.name)}</h4>
