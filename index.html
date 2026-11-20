@@ -338,19 +338,37 @@ function renderBills(){
 }
 function toggle(btn,key){
   const box=btn.nextElementSibling; if(!box.hidden){box.hidden=true;return;}
-  const b=BILLS.find(x=>x.key===key), i=b.imp||{};
+  const b=BILLS.find(x=>x.key===key), i=b.imp||{}, f=flagOf(b);
+  const concerns=(b.cost_flag?`<li><b>Cost to taxpayers: ${esc(b.cost_flag)}</b></li>`:"")+(i.concerns||[]).map(x=>`<li>${esc(x)}</li>`).join("");
+  const sponsors=(b.sponsors||[]).map(x=>esc(x.name)).join("<br>");
   box.innerHTML=`<h3>In plain English</h3><p>${esc(b.summary)}</p>
     <div class="cols"><div class="box"><h4>What it does</h4>${list(b.does)}</div><div class="box"><h4>Who's affected</h4>${list(b.who)}</div></div>
     <h3>Potential implications</h3>
-    <div class="cols"><div class="box"><h4>Possible benefits</h4>${list(i.benefits)}</div><div class="box"><h4>Possible concerns</h4>${list(i.concerns)}</div>
-      <div class="box"><h4>Cost / funding</h4><p>${esc(i.cost||"Not stated.")}</p><h4>Unknowns</h4>${list(i.unknowns)}</div></div>
+    <div class="cols"><div class="box"><h4>Possible benefits</h4>${list(i.benefits)}</div>
+      <div class="box"><h4>Possible concerns</h4>${concerns?`<ul>${concerns}</ul>`:'<p class="muted small">None noted.</p>'}
+        ${(i.unknowns||[]).length?`<h4 style="margin-top:10px">Unknowns</h4>${list(i.unknowns)}`:""}</div>
+      <div class="box"><h4>Who introduced it, and why</h4>
+        ${sponsors?`<p class="small" style="margin:0 0 6px">${sponsors}${b.cosponsors?`<br><span class="muted">+ ${esc(b.cosponsors)} cosponsor${b.cosponsors==1?"":"s"}</span>`:""}${b.introduced?`<br><span class="muted">Introduced ${esc(b.introduced)}</span>`:""}</p>`:""}
+        ${b.purpose?`<p class="small" style="margin:0">${esc(b.purpose)}</p>`:'<p class="muted small">Being written — check back after the next update.</p>'}</div></div>
     ${b.crs?`<details><summary>Congressional Research Service summary</summary><p class="small">${esc(b.crs)}</p></details>`:""}
     <h3>Who to call about it</h3>
     <div class="cols">${ME.reps.map(m=>`<div class="box"><h4>${esc(m.title)} ${esc(m.name)}</h4>
       ${m.phone?`📞 <a href="tel:${esc(m.phone)}">${esc(m.phone)}</a><br>`:""}${m.contact_form?`✉️ <a href="${safeUrl(m.contact_form)}" target="_blank" rel="noopener">Contact form</a>`:""}</div>`).join("")}</div>
+    ${talkingPoints(b,f.flag)}
     <h3>Related news & context</h3>${newsHtml(b.news)}
     <p class="small"><a href="${safeUrl(b.url)}" target="_blank" rel="noopener">Official bill page on Congress.gov ↗</a></p>`;
   box.hidden=false;
+}
+function talkingPoints(b,flag){
+  const tp=b.tp||{}, zip=$("zip").value.trim(), name=b.short_title||b.title;
+  const script=(stance,points)=>`<div class="box" style="margin-top:12px"><h4>What to say${stance?` if you ${stance} it`:""}</h4>
+    <p class="small muted" style="margin:0 0 6px">“Hi, my name is ____ and I'm a constituent from ZIP ${esc(zip)}. I'm calling about ${esc(b.label)}, the ${esc(name)}.”</p>
+    ${list(points)}
+    <p class="small muted" style="margin:6px 0 0">“I'm asking the Senator / Representative to vote <b>${stance==="support"?"yes":"no"}</b> on ${esc(b.label)}. Thank you.”</p></div>`;
+  if(flag==="URGENT"&&tp.oppose&&tp.oppose.length) return script("oppose",tp.oppose);
+  if(flag==="SAFE"&&tp.support&&tp.support.length) return script("support",tp.support);
+  if(tp.oppose&&tp.oppose.length) return `<div class="cols">${script("oppose",tp.oppose)}${script("support",tp.support||[])}</div>`;
+  return "";
 }
 function newsHtml(n){
   const note=`<p class="small muted">Only outlets on our high-factuality list are shown${META.news_outlets_verified?"":" (outlet list pending review)"}. News via ${META.news_source==="gdelt"?"the GDELT Project":META.news_source==="rss"?"the outlets' own RSS feeds, matched to each bill's topic":"GNews"}.</p>`;
