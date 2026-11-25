@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-25T03:39:12Z",
+ "generated_at": "2026-11-25T13:13:25Z",
  "values": [
   {
    "id": "water",
@@ -46,7 +46,7 @@
    "label": "Environmental Protections"
   }
  ],
- "bill_count": 301,
+ "bill_count": 371,
  "news_outlets_verified": true,
  "news_source": "rss",
  "subscribe_url": "https://script.google.com/macros/s/AKfycbzFgt7uhRm0jOlOLfhR00Gw6TEfUQxExc5Wr6vlaEO4gd5ZsMRhEx8CjlYG0rSi0vhG/exec",
