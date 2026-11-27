@@ -164,7 +164,7 @@
     <div class="signup" id="signup" hidden>
       <h2 style="margin-top:10px">Get an email when it matters</h2>
       <p class="small" style="max-width:640px">We'll email you only when a federal bill <b>misaligned with the values
-        you kept</b> is new or moves forward (at most once every 3 days), with who represents ZIP
+        you kept</b> is new or moves forward (at most once every 4 days), with who represents ZIP
         <b id="su-zip"></b> and how to reach them. You'll confirm by email first, and every email has a one-click
         unsubscribe link. Your email is used for nothing else.</p>
       <form id="su-form" autocomplete="on">
@@ -213,7 +213,8 @@ async function init(){
   $("footmeta").textContent=`${META.bill_count} open federal bills · ${META.zip_count.toLocaleString()} ZIP codes mapped · data refreshed ${new Date(META.generated_at).toLocaleString()}`;
   $("state").innerHTML=Object.entries(STATES).map(([k,v])=>`<option value="${k}">${v}</option>`).join("");
   const h=new URLSearchParams(location.hash.slice(1));
-  const pre=h.get("v")?h.get("v").split(","):META.values.map(v=>v.id);
+  const OLD={};META.values.forEach(v=>(v.replaces||[]).forEach(o=>OLD[o]=v.id));
+  const pre=h.get("v")?[...new Set(h.get("v").split(",").map(x=>OLD[x]||x))]:META.values.map(v=>v.id);
   SEL=new Set(pre);
   $("vals").innerHTML=META.values.map(v=>`<label class="val ${SEL.has(v.id)?"":"off"}"><input type="checkbox" value="${esc(v.id)}" ${SEL.has(v.id)?"checked":""}><span>${esc(v.label)}</span></label>`).join("");
   $("vals").addEventListener("change",e=>{e.target.closest(".val").classList.toggle("off",!e.target.checked)});

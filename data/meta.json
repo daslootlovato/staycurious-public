@@ -1,49 +1,54 @@
 {
- "generated_at": "2026-11-25T13:13:25Z",
+ "generated_at": "2026-11-27T04:05:25Z",
  "values": [
   {
-   "id": "water",
-   "label": "Clean water"
+   "id": "environment",
+   "label": "Environmental protection (water, air, land, ecosystems)",
+   "definition": "Protects (+) or harms (-) the cleanliness, safety or availability of water, air and land that people, animals and ecosystems rely on, and how well those protections are enforced.",
+   "replaces": [
+    "water",
+    "air",
+    "environmental_protection"
+   ]
   },
   {
-   "id": "air",
-   "label": "Clean air"
-  },
-  {
-   "id": "transparency",
-   "label": "Transparency between people and their government"
+   "id": "transparency_kindness",
+   "label": "Transparency and kindness",
+   "definition": "Promotes truthful information, open government (the public can see, review and comment on what the government does, spends and decides, and who influences it), and humane treatment of people and animals (+); or allows secrecy, deception or needless harm (-).",
+   "replaces": [
+    "transparency",
+    "honesty_kindness"
+   ]
   },
   {
    "id": "people_over_profit",
-   "label": "People over corporate profit margins"
+   "label": "People over profit",
+   "definition": "Favors people, land and resources (+) over corporate profit margins and shareholder gains, or shifts costs from corporations onto consumers, taxpayers and the public (-)."
   },
   {
    "id": "local_say",
-   "label": "Community input in law that impact them"
+   "label": "Community input",
+   "definition": "Gives people and their local or state governments more (+) or less (-) say over decisions that affect their own area, such as land use, facilities, permits, new laws and services."
   },
   {
    "id": "no_bailouts",
-   "label": "No corporate bailouts or ratepayer-funded tax breaks"
-  },
-  {
-   "id": "honesty_kindness",
-   "label": "Honesty and kindness"
+   "label": "No bailouts or ratepayer tax breaks",
+   "definition": "Avoids (+) bailing out corporations with taxpayer money or shifting fiscal responsibility elsewhere; (-) shifts monetary misuse to taxpayers, utility rate hikes to other ratepayers, etc. A bill with nothing to do with bailouts gets 0."
   },
   {
    "id": "equality",
-   "label": "Equality"
+   "label": "Equality",
+   "definition": "Treats people the same under the law and gives equal access to rights and opportunities, whoever they are (+); or creates unequal treatment for any group (-)."
   },
   {
    "id": "justice",
-   "label": "Justice"
+   "label": "Justice",
+   "definition": "Makes legal processes fairer, more consistent and more accountable for everyone, including due process and real remedies for harm (+); or less so (-)."
   },
   {
    "id": "personal_freedom",
-   "label": "Personal freedom"
-  },
-  {
-   "id": "environmental_protection",
-   "label": "Environmental Protections"
+   "label": "Personal freedom",
+   "definition": "Expands (+) or restricts (-) what individuals may legally do, say or choose about their own lives, whoever is affected."
   }
  ],
  "bill_count": 371,
